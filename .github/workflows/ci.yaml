@@ -6,24 +6,24 @@ jobs:
        build-deploy:
         runs-on: ubuntu-latest
        steps:
-         - name: checkout code
-           uses: actions/checkout@v5
-         - name: set-up jdk
-           uses: actions/setup-java@v5
-           with:
+          - name: checkout code
+            uses: actions/checkout@v5
+          - name: set-up jdk
+            uses: actions/setup-java@v5
+            with:
               distribution: "temurin"
               java-version: "17"
-         - name: validate with maven
-           run: mvn validate
+          - name: validate with maven
+            run: mvn validate
           
-         - name: compile with maven
-           run: mvn compile
+          - name: compile with maven
+            run: mvn compile
 
-         - name: test with maven
-           run: mvn test
+          - name: test with maven
+            run: mvn test
 
-         - name: package with maven
-           run: mvn package
+          - name: package with maven
+            run: mvn package
 
-         - name: verify the war file
-           run: ls -lh target/
+          - name: verify the war file
+            run: ls -lh target/ 
