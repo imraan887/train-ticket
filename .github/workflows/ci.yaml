@@ -1,36 +1,45 @@
 name: cd pipeline to build maven
 on:
   push:
-    branches: master
-jobs:  
-   build-deploy:
-      runs-on: ubuntu-latest
-      steps:
-       - name: checkout code
-         uses: actions/checkout@v5
-       - name: set-up jdk
-         uses: actions/setup-java@v5
-         with:
-             distribution: "temurin"
-             java-version: "17"
-       - name: validate with maven
-         run: mvn validate         
-       - name: compile with maven
-         run: mvn compile
-       - name: test with maven
-         run: mvn test
-       - name: package with maven
-         run: mvn package
+    branches:
+      - master
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-       - name: verify the war file
-         run: ls -lh target/ 
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
 
-         # Deploy to Tomcat
-      - name: deploy war to tomcat
-        run: | 
-                curl -v -u ${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }} \
-                  -T target/TrainBook-1.0.0-SNAPSHOT.war \
-                  "http://${{ secrets.TOMCAT_HOST }}:8080/manager/text/deploy?path=/TrainBook&update=true"
+      - name: Validate with Maven
+        run: mvn validate
+
+      - name: Compile with Maven
+        run: mvn compile
+
+      - name: Test with Maven
+        run: mvn test
+
+      - name: Package with Maven
+        run: mvn package
+
+      - name: Verify the WAR file
+        run: ls -lh target/
+
+      - name: Deploy WAR to Tomcat
+        env:
+          TOMCAT_USER: ${{ secrets.TOMCAT_USER }}
+          TOMCAT_PASSWORD: ${{ secrets.TOMCAT_PASSWORD }}
+          TOMCAT_HOST: ${{ secrets.TOMCAT_HOST }}
+        run: |
+          curl -v -u "${TOMCAT_USER}:${TOMCAT_PASSWORD}" \
+            -T target/TrainBook-1.0.0-SNAPSHOT.war \
+            "http://${TOMCAT_HOST}:8080/manager/text/deploy?path=/TrainBook&update=true"
 
 
 
